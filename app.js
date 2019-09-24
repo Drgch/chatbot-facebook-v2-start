@@ -34,9 +34,26 @@ if (!config.FB_APP_SECRET) {
 }
 if (!config.SERVER_URL) { //used for ink to static files
     throw new Error('missing SERVER_URL');
+
+if (!config.SENGRID_API_KEY) {
+    throw new Error('missing SENDGRID_API_KEY ');
 }
-
-
+if (!config.EMAIL_TO) {
+    throw new Error('missing EMAIL_TO');
+}
+if(!config.EMAIL_FROM) {
+    throw new Error('missing EMAIL_FROM');
+}
+if (!config.SENGRID_API_KEY) { //sending email
+    throw new Error('missing SENGRID_API_KEY');
+}
+if (!config.EMAIL_FROM) { //sending email
+    throw new Error('missing EMAIL_FROM');
+}
+if (!config.EMAIL_TO) { //sending email
+    throw new Error('missing EMAIL_TO');
+    }
+}
 
 app.set('port', (process.env.PORT || 5000))
 
@@ -196,17 +213,46 @@ function handleQuickReply(senderID, quickReply, messageId) {
     sendToDialogFlow(senderID, quickReplyPayload);
 }
 
-//https://developers.facebook.com/docs/messenger-platform/webhook-reference/message-echo
+//https://developers.facebook.com/docs/mls
+//messenger-platform/webhook-reference/message-echo
 function handleEcho(messageId, appId, metadata) {
     // Just logging message echoes to console
     console.log("Received echo for message %s and app %d with metadata %s", messageId, appId, metadata);
 }
 
 function handleDialogFlowAction(sender, action, messages, contexts, parameters) {
-    switch (action) {
-        default:
-            //unhandled action, just send back the text
-            handleMessages(messages, sender);
+    witch(action)
+    {
+    case
+        "PropertyRecommendation-Details"
+    :
+        if (isDefined(contexts[0]) &&
+            (contexts[0].name.includes('property-details') || contexts[0].name.includes('PropertyRecommendation-Details_dialog_context'))
+            && contexts[0].parameters) {
+            let bedroom_number = (isDefined(contexts[0].parameters.fields['BedroomNum'])
+                && contexts[0].parameters.fields['BedroomNum'] != '') ? contexts[0].parameters.fields['BedroomNum'].stringValue : '';
+            let user_name = (isDefined(contexts[0].parameters.fields['user-name'])
+                && contexts[0].parameters.fields['user-name'] != '') ? contexts[0].parameters.fields['user-name'].stringValue : '';
+            let sq_footage = (isDefined(contexts[0].parameters.fields['SqFootage'])
+                && contexts[0].parameters.fields['SqFootage'] != '') ? contexts[0].parameters.fields['SqFootage'].stringValue : '';
+
+            if (bedroom_number != '' && user_name != '' && sq_footage != '') {
+
+                let emailContent = 'A new property inquiry from ' + user_name +
+                    '.<br> Number of bedrooms: ' + bedroom_number + '.' +
+                    '.<br> Square Footage ' + sq_footage + '.';
+
+                sendEmail('New Property Inquiry', emailContent);
+
+                handleMessages(messages, sender);
+            } else {
+                handleMessages(messages, sender);
+            }
+        }
+        break;
+    default:
+        //unhandled action, just send back the text
+        handleMessages(messages, sender);
     }
 }
 
@@ -828,6 +874,31 @@ function receivedAuthentication(event) {
  * https://developers.facebook.com/docs/graph-api/webhooks#setup
  *
  */
+function sendEmail(subject, content) {
+    console.log('sending email');
+    var helper = require('sendgrid').mail;
+
+    var from_email = new helper.Email(config.EMAIL_FROM);
+    var to_email = new helper.Email(config.EMAIL_TO);
+    var subject = subject;
+    var content = new helper.Content("text/html", content);
+    var mail = new helper.Mail(from_email, subject, to_email, content);
+
+    var sg = require('sendgrid')(config.SENGRID_API_KEY);
+    var request = sg.emptyRequest({
+        method: 'POST',
+        path: '/v3/mail/send',
+        body: mail.toJSON()
+    });
+
+    sg.API(request, function(error, response) {
+        console.log(response.statusCode)
+        console.log(response.body)
+        console.log(response.headers)
+    })
+}
+
+
 function verifyRequestSignature(req, res, buf) {
     var signature = req.headers["x-hub-signature"];
 
@@ -864,3 +935,4 @@ function isDefined(obj) {
 app.listen(app.get('port'), function () {
     console.log('running on port', app.get('port'))
 })
+
