@@ -221,13 +221,11 @@ function handleEcho(messageId, appId, metadata) {
 }
 
 function handleDialogFlowAction(sender, action, messages, contexts, parameters) {
-    switch(action)
-    {
+    switch(action) {
     case
-        "PropertyRecommendation-Details"
-    :
+        "property-details":
         if (isDefined(contexts[0]) &&
-            (contexts[0].name.includes('property-details') || contexts[0].name.includes('PropertyRecommendation-Details_dialog_context'))
+            (contexts[0].name.includes('property-definition') || contexts[0].name.includes('PropertyRecommendation-Details_dialog_context'))
             && contexts[0].parameters) {
             let bedroom_number = (isDefined(contexts[0].parameters.fields['BedroomNum'])
                 && contexts[0].parameters.fields['BedroomNum'] != '') ? contexts[0].parameters.fields['BedroomNum'].stringValue : '';
@@ -250,7 +248,7 @@ function handleDialogFlowAction(sender, action, messages, contexts, parameters) 
             }
         }
         break;
-    default:
+            default:
         //unhandled action, just send back the text
         handleMessages(messages, sender);
     }
