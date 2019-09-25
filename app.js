@@ -221,7 +221,7 @@ function handleEcho(messageId, appId, metadata) {
 }
 
 function handleDialogFlowAction(sender, action, messages, contexts, parameters) {
-    witch(action)
+    switch(action)
     {
     case
         "PropertyRecommendation-Details"
