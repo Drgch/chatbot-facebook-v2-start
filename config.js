@@ -1,3 +1,5 @@
+// The environmental variables
+
 module.exports = {
     FB_PAGE_TOKEN: process.env.FB_PAGE_TOKEN,
     FB_VERIFY_TOKEN: process.env.FB_VERIFY_TOKEN,
