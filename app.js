@@ -1,7 +1,7 @@
 'use strict';
 
 const dialogflow = require('dialogflow');
-const config = require('./config');
+const config = require('./config.js');
 const express = require('express');
 const crypto = require('crypto');
 const bodyParser = require('body-parser');
@@ -10,9 +10,9 @@ const app = express();
 const uuid = require('uuid');
 
 // Messenger API parameters
-//  (!config.FB_PAGE_TOKEN) {
-//    throw new Error('missing FB_PAGE_TOKEN');
-// }
+  (!config.FB_PAGE_TOKEN){
+    throw new Error('missing FB_PAGE_TOKEN');
+}
 if (!config.FB_VERIFY_TOKEN) {
     throw new Error('missing FB_VERIFY_TOKEN');
 }
