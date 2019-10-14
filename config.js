@@ -1,7 +1,7 @@
 // The environmental variables
 
 module.exports = {
-    FB_PAGE_TOKEN: process.env.FB_PAGE_TOKEN,
+    FB_PAGE_TOKEN:'EAASSJ1kB8NgBANcmexcXbVhdXy3eW6VZBcEDdDnpZA9B4SiQtZAk7FN3YSDyMtt6oIYVkvyZC1MNYn00vJxUbr989CJrazhqiZCSHi0Ed3mFIWwGTp8T4otfuoKLVXiz5EL1cMZBpbCnhtiiFA1PfThTTuujTe64sVoeJRBg3ainZCaE5pv8sOI',
     FB_VERIFY_TOKEN: process.env.FB_VERIFY_TOKEN,
     FB_APP_SECRET: process.env.FB_APP_SECRET,
     SERVER_URL: process.env.SERVER_URL,
